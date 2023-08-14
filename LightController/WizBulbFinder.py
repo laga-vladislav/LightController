@@ -18,7 +18,7 @@ class WizBulbFinder:
         try:
             await self.__find_wizlight_bulbs_by_attempts()
         except RetriesError as e:
-            print(e)  # need to log
+            print(e)  # log
             return self._bulbs
         return self._bulbs
 
@@ -26,17 +26,17 @@ class WizBulbFinder:
         attempt_counter = 0
         while attempt_counter < 3:
             try:
-                print("start time:", time.strftime('%X'), self._bulbs, attempt_counter)
+                print("start time:", time.strftime('%X'), self._bulbs, attempt_counter)  # log
                 self._bulbs = await self.__discover_bulbs()
                 break
             except TimeoutError as e:
-                print(e)
+                print(e)  # log
                 attempt_counter += 1
             except asyncio.exceptions.TimeoutError as e:
-                print(e)
+                print(e)  # log
                 attempt_counter += 1
             finally:
-                print("end time:", time.strftime('%X'))
+                print("end time:", time.strftime('%X'))  # log
         else:
             raise RetriesError('Count of finding retries exceeded')
 
@@ -45,3 +45,12 @@ class WizBulbFinder:
         if not bulbs:
             raise TimeoutError('Finding bulbs time exceeded')
         return bulbs
+
+async def main():
+    finder = WizBulbFinder()
+    bulbs = await finder.get_bulbs()
+    print(bulbs)
+
+
+if __name__ == "__main__":
+    asyncio.get_event_loop().run_until_complete(main())
