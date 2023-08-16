@@ -1,45 +1,47 @@
 import asyncio
+from abc import ABC
 
 import pywizlight.bulb
-from pywizlight import wizlight, PilotBuilder, PilotParser
+from pywizlight import wizlight, PilotBuilder
+from AbstractBulbController import BulbController
 from WizBulbProfile import WizBulbProfile
 from WizBulbProfile import Aliases
 
-class WizBulbController:
-    def __init__(
-            self,
-            wizlight_bulb: wizlight,
-            bulb_profile: WizBulbProfile = WizBulbProfile()
-    ) -> None:
-        self._bulb: wizlight = wizlight_bulb
-        self._bulb_profile: WizBulbProfile = bulb_profile
-        self._config: pywizlight.bulb.PilotParser
-        self._status: bool
-
+class WizBulbController(BulbController, ABC):
     def __dict__(self):
         return {
-            'ip': self._bulb.ip,
-            'mac': self._bulb.mac
+            'ip': self._bulb_instance.ip,
+            'mac': self._bulb_instance.mac
         }
 
-    async def __update_config(self):
-        self._config = await self._bulb.updateState()
-        print(self._config.__dict__)
-
-    async def get_status(self):
+    # Abstract methods
+    async def get_status(self) -> bool:
+        """
+        True is ON
+        False is OFF
+        """
         await self.__update_status()
         return self._status
 
-    async def __update_status(self):
-        await self.__update_config()
-        self._status = self._config.get_state()
-
-    async def turn_on(self):
+    async def turn_on(self) -> None:
         pilot_builder = await self.__convert_bulb_profile_to_pilot_builder()
-        await self._bulb.turn_on(pilot_builder=pilot_builder)
+        await self._bulb_instance.turn_on(pilot_builder=pilot_builder)
+
+    async def turn_off(self) -> None:
+        await self._bulb_instance.turn_off()
+
+    # Individual methods
+    async def __update_status(self) -> None:
+        config = await self.__get_updated_config()
+        self._status = config.get_state()
+
+    async def __get_updated_config(self) -> pywizlight.bulb.PilotParser:
+        config = await self._bulb_instance.updateState()
+        print(config.__dict__)  # log
+        return config
 
     async def __convert_bulb_profile_to_pilot_builder(self) -> PilotBuilder:
-        await self.__update_config()
+        await self.__update_status()
         brightness = self._get_brightness()
         print(brightness)
         light_temperature = self._get_light_temperature()
@@ -58,30 +60,27 @@ class WizBulbController:
         pass
 
     def _get_brightness(self) -> Aliases.HexCode:
-        return self._bulb_profile.get_params()["brightness"]\
-            if "brightness" in self._bulb_profile.get_params().keys()\
+        return self._bulb_profile.get_params()["brightness"] \
+            if "brightness" in self._bulb_profile.get_params().keys() \
             else self._config.get_brightness()
 
     def _get_light_temperature(self) -> Aliases.KelvinTemperature:
-        return self._bulb_profile.get_params()["light_temperature"]\
-            if "light_temperature" in self._bulb_profile.get_params().keys()\
+        return self._bulb_profile.get_params()["light_temperature"] \
+            if "light_temperature" in self._bulb_profile.get_params().keys() \
             else self._config.get_colortemp()
 
     def _get_rgb_color(self):
-        return self._bulb_profile.get_params()["RGBColor"]\
-            if "RGBColor" in self._bulb_profile.get_params().keys()\
+        return self._bulb_profile.get_params()["RGBColor"] \
+            if "RGBColor" in self._bulb_profile.get_params().keys() \
             else self._config.get_rgb()
 
-    async def turn_off(self):
-        await self._bulb.turn_off()
 
 async def main():
     bulb = wizlight(ip="192.168.1.135", port=38899, mac="6c2990a286f5")
     bulb2 = wizlight(ip="192.168.1.155", port=38899, mac="6c2990a2a00e")
     profile = WizBulbProfile(
         brightness=255,
-        light_temperature=1400,
-        rgb_color=(100, 100, 100)
+        light_temperature=4400
     )
     controller = WizBulbController(bulb2, profile)
     await controller.turn_on()

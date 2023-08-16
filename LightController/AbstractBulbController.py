@@ -14,12 +14,13 @@ class BulbController(ABC):
     ) -> None:
         self._bulb_instance = bulb_instance
         self._bulb_profile = bulb_profile
+        self._status: bool
 
     def set_new_profile(self, new_profile: WizBulbProfile):
         self._bulb_profile = new_profile
 
     @abstractmethod
-    def get_status(self):
+    def get_status(self) -> bool:
         pass
 
     @abstractmethod
