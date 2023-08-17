@@ -14,7 +14,10 @@ class LightController(ABC):
         self._bulb_profile = new_profile
 
     def get_status(self) -> bool:
-        """True -> ON, False -> OFF"""
+        """
+        True is ON
+        False is OFF
+        """
         return self._bulb_instance.status
 
     @abstractmethod
