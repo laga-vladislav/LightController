@@ -2,13 +2,16 @@ from abc import ABC, abstractmethod
 from bulb import BulbProfile, InstanceOfBulb
 
 class LightController(ABC):
-    def __int__(
+    def __init__(
             self,
             bulb_instance: InstanceOfBulb,
             bulb_profile: BulbProfile
     ):
         self._bulb_instance = bulb_instance
         self._bulb_profile = bulb_profile
+
+    def set_new_profile(self, new_profile: BulbProfile):
+        self._bulb_profile = new_profile
 
     def get_status(self) -> bool:
         """True -> ON, False -> OFF"""
