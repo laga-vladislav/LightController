@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from bulb import BulbProfile, InstanceOfBulb
+from BulbCore import BulbProfile, InstanceOfBulb
 
 class LightController(ABC):
     def __init__(
