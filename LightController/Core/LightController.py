@@ -1,4 +1,6 @@
 from abc import ABC, abstractmethod
+from typing import Optional
+
 from BulbCore import BulbProfile, InstanceOfBulb
 
 class LightController(ABC):
