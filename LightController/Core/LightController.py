@@ -5,10 +5,15 @@ class LightController(ABC):
     def __init__(
             self,
             bulb_instance: InstanceOfBulb,
-            bulb_profile: BulbProfile
-    ):
+            bulb_profile: Optional[BulbProfile]
+    ) -> None:
         self._bulb_instance = bulb_instance
         self._bulb_profile = bulb_profile
+        self._check_instance_type()
+
+    @abstractmethod
+    def _check_instance_type(self):
+        pass
 
     def set_new_profile(self, new_profile: BulbProfile):
         self._bulb_profile = new_profile
