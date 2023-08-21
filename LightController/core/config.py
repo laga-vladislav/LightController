@@ -1,6 +1,6 @@
 from typing import Union
 from pywizlight import wizlight
-from .library import Aliases
+from LightController.core.library import Aliases
 
 TIME_FORMAT_FOR_LOGGER = '%X'
 
