@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "light-controller"
+version = "0.1.0"
+description = ""
+authors = ["laga-vladislav <laga.ladislav@yandex.ru>"]
+readme = "README.md"
+packages = [{include = "light_controller"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pytest = "^7.4.0"
+pywizlight = "^0.5.14"
+pytest-asyncio = "^0.21.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
