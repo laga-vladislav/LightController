@@ -1,10 +1,10 @@
 import dataclasses
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Union
+from typing import Optional
 
-from library import Features, Aliases
-from config import INSTANCE_BULB_TYPES
+from LightController.core.library import Features, Aliases
+from LightController.core.config import INSTANCE_BULB_TYPES
 
 class BulbType(Enum):
     TW = "Tunable White"
@@ -16,8 +16,8 @@ class BulbType(Enum):
     SOCKET = "Socket"
     """Smart socket with only on/off."""
 
-class BulbTypeDeterminator(ABC):
-    def __int__(
+class AbstractBulbTypeDeterminator(ABC):
+    def __init__(
             self,
             specific_instance: INSTANCE_BULB_TYPES
     ) -> None:
@@ -28,7 +28,7 @@ class BulbTypeDeterminator(ABC):
         pass
 
 @dataclasses.dataclass
-class InstanceOfBulb(ABC):
+class AbstractInstanceOfBulb(ABC):
     """
     Abstract class for instances.
     """
@@ -40,10 +40,10 @@ class InstanceOfBulb(ABC):
     features: Features
     parent_instance: INSTANCE_BULB_TYPES
     """'parent_instance' Contains the class from another package which controls the bulb.
-    The specific class is obtained from the BulbFinder module."""
+    The specific class is obtained from the finders list."""
 
 @dataclasses.dataclass
-class BulbProfile:
+class AbstBulbProfile:
     """
     Contains the information about bulb parameters
     _params keys:
@@ -55,13 +55,32 @@ class BulbProfile:
     colortemp: Aliases.KelvinTemp | None
     color: Aliases.RGBColor | None
 
-class BulbProfileDeterminator:
+class BulbProfileGenerator:
     """
-    Define BulbProfile with the BulbType information
+    Define AbstBulbProfile with Features information
+    :returns AbstBulbProfile
     """
-    @staticmethod
-    def define_profile(bulb_type: BulbType) -> BulbProfile:
-        pass
+    def __init__(self, features: Features):
+        self._features = features
+
+    def set_parameters(
+            self,
+            brightness: Optional[Aliases.HexCode],
+            colortemp: Optional[Aliases.KelvinTemp],
+            color: Optional[Aliases.RGBColor]
+    ) -> AbstBulbProfile:
+        """
+        :param brightness: HexCode
+        :param colortemp: KelvinTemp
+        :param color: RGBColor
+        :return: BulbProfile
+        """
+        profile = AbstBulbProfile(
+            brightness=brightness if self._features.brightness else None,
+            colortemp=colortemp if self._features.colortemp else None,
+            color=color if self._features.color else None
+        )
+        return profile
 
 
 if __name__ == '__main__':
