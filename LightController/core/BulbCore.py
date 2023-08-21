@@ -43,7 +43,7 @@ class AbstractInstanceOfBulb(ABC):
     The specific class is obtained from the finders list."""
 
 @dataclasses.dataclass
-class AbstBulbProfile:
+class AbstractBulbProfile:
     """
     Contains the information about bulb parameters
     _params keys:
@@ -68,14 +68,14 @@ class BulbProfileGenerator:
             brightness: Optional[Aliases.HexCode],
             colortemp: Optional[Aliases.KelvinTemp],
             color: Optional[Aliases.RGBColor]
-    ) -> AbstBulbProfile:
+    ) -> AbstractBulbProfile:
         """
         :param brightness: HexCode
         :param colortemp: KelvinTemp
         :param color: RGBColor
         :return: BulbProfile
         """
-        profile = AbstBulbProfile(
+        profile = AbstractBulbProfile(
             brightness=brightness if self._features.brightness else None,
             colortemp=colortemp if self._features.colortemp else None,
             color=color if self._features.color else None
