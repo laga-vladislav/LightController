@@ -1,7 +1,5 @@
 import dataclasses
 
-from pywizlight.scenes import SCENES
-
 from LightController.core.BulbCore import AbstractInstanceOfBulb
 
 
